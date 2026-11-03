@@ -1,22 +1,15 @@
 /** @type {import('next').NextConfig} */
-const repoName = 'smart-home-dashboard';
-
-const isProd = process.env.NODE_ENV === 'production';
+const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1] || '';
+const isPages = process.env.GITHUB_ACTIONS === 'true';
+const isUserSite = repoName.endsWith('.github.io');
+const basePath = isPages && !isUserSite ? `/${repoName}` : '';
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  images: {
-    unoptimized: true,
-  },
   output: 'export',
-  ...(isProd ? {
-    basePath: `/${repoName}`,
-    assetPrefix: `/${repoName}/`,
-  } : {}),
+  trailingSlash: true,
+  images: { unoptimized: true },
+  basePath,
+  assetPrefix: basePath ? `${basePath}/` : undefined,
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: true },
 };
-
 export default nextConfig;
